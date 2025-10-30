@@ -1,4 +1,3 @@
-package chess;
 import java.util.Scanner;
 public class Chess {
     /** GOALS
@@ -8,7 +7,7 @@ public class Chess {
     * make simpler prompt method used for every prompt
     **/
     static Scanner input = new Scanner(System.in);
-    static char[][] board = createBoard();
+    static char[][] board = createVisualBoard();
 
     public static void main(String[] args) {
         int start = 0;
@@ -46,22 +45,26 @@ public class Chess {
     }
 
     //create board method
-    public static char[][] createBoard() {
-        char[] pieces = {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'};
-        char[][] playingBoard = new char[8][8];
+    public static char[][] createVisualBoard() {
+        char[] pieces = {' ', ' ', 'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'};
+        char[] letters = {' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+        char[] numbers = {' ', ' ', '1', '2', '3', '4', '5', '6', '7', '8'};
+        char[][] playingBoard = new char[10][10];
     
-        for(int i = 0; i < 8; i++) {
-            playingBoard[1][i] = 'p';
-            playingBoard[6][i] = 'P'; 
+        for(int i = 2; i < 10; i++) {
+            playingBoard[3][i] = 'p';
+            playingBoard[8][i] = 'P'; 
         }
          
-        for(int i = 0; i < 8; i++) {
-            playingBoard[0][i] = pieces[i];
-            playingBoard[7][i] = Character.toUpperCase(pieces[i]);
+        for(int i = 2; i < 10; i++) {
+            playingBoard[i][0] = numbers[i];
+            playingBoard[0][i] = letters[i];
+            playingBoard[2][i] = pieces[i];
+            playingBoard[9][i] = Character.toUpperCase(pieces[i]);
         }
             
-        for(int i = 2; i <= 5; i++) {
-            for(int j = 0; j < 8; j++) {
+        for(int i = 4; i <= 7; i++) {
+            for(int j = 2; j < 10; j++) {
                 playingBoard[i][j] = '.';
             }
         }
@@ -79,9 +82,9 @@ public class Chess {
 
             if(menuSelection.toUpperCase().equals("MOVE")) {
                 String pieceSelection = question("Which piece?");
-                char piece = selectPiece(pieceSelection);
+                String[] pieceData = selectPiece(pieceSelection);
                 String placeSelection = question("To where?");
-                placePiece(placeSelection, piece);
+                placePiece(placeSelection, pieceData);
                 printBoard(board);
                 completedTurn = true;
 
@@ -96,32 +99,86 @@ public class Chess {
             player = "White";
         }
         return player;
+
+//MOVE METHODS
+
+    }
+    //square selector
+    public static String[] selectSquare(String square) {
+        String c = square.substring(0,1);
+        String r = square.substring(1,2);
+
+        String col = String.valueOf(c.toLowerCase().charAt(0) - 'a' + 2);
+        String row = String.valueOf(Integer.parseInt(r) + 1);
+
+        String[] position = {col, row};
+        return position;
     }
 
     //selects a piece method
-    public static char selectPiece(String square) {
-        String c = square.substring(0,1);
-        String r = square.substring(1,2);
+    public static String[] selectPiece(String square) {
+        String[] position = selectSquare(square);
+        int c = Integer.parseInt(position[0]);
+        int r = Integer.parseInt(position[1]);
 
-        int col = c.toLowerCase().charAt(0) - 'a';
-        int row = Integer.parseInt(r) - 1;
-
-        char selectedPiece = board[row][col];
-        board[row][col] = '.';
-        return selectedPiece;
+        String selectedPiece = String.valueOf(board[r][c]);
         
+
+        String col = String.valueOf(c);
+        String row = String.valueOf(r);
+        String[] pieceData = {col, row, selectedPiece};
+
+        board[r][c] = '.';
+        return pieceData;
     }
 
     //places a piece method
-    public static void placePiece(String square, char piece) {
-        String c = square.substring(0,1);
-        String r = square.substring(1,2);
+    public static void placePiece(String square, String[] pieceData) {
+        String[] position = selectSquare(square);
+        int c = Integer.parseInt(position[0]);
+        int r = Integer.parseInt(position[1]);
 
-        int col = c.toLowerCase().charAt(0) - 'a';
-        int row = Integer.parseInt(r) - 1;
-
-        board[row][col] = piece;
+        validMove(position, pieceData);
+        String piece = pieceData[2];
+        board[r][c] = piece.charAt(0);
     }
+    //need to return row and col, 
+
+//VALIDATOR METHODS
+
+   //distributor for different pieces
+    public static boolean validMove(String[] position, String[] pieceData) {
+        String type = pieceData[2];
+        char piece = type.charAt(0);
+        
+        if (piece == 'p' || piece == 'P') {
+
+            return validPawn(piece, pieceData);
+        }
+        
+        return true;
+    }
+
+    public static boolean validPawn(char piece, String[] pieceData) {
+        boolean valid = false;
+        int c = Integer.parseInt(pieceData[0]);
+        int r = Integer.parseInt(pieceData[1]);
+        if (piece == 'P') {
+            //String[] validMoves
+
+            //valid positions are col -1 or 2)
+            return valid;
+        } else if (piece =='p') {
+            //valid positions are col +1 or 2
+            return valid;
+        } else {
+            System.out.print("System Error");
+            return valid;
+        }
+        
+    }
+
+
 
     //resignation method
     public static boolean resignation(String player) {
@@ -194,6 +251,7 @@ public class Chess {
 
     //print board method
     public static void printBoard(char[][] board) {
+        System.out.print(" ");
         for (char[] board1 : board) {
             for (int j = 0; j < board1.length; j++) {
                 System.out.print(board1[j] + " ");
@@ -202,6 +260,42 @@ public class Chess {
         }
         System.out.println();
     }
+
+
+//CONVERT ARRAY DATA METHODS
+    //String to int
+    public static int convertToInt(String input) {
+        int value = Integer.parseInt(input);
+        return value;
+    }
+
+    //String to char
+    public static char convertToChar(String input) {
+        char c = input.charAt(0);
+        return c;
+    }
+
+    //String to bool
+    public static boolean convertToBool(String input) {
+        int value = Integer.parseInt(input);
+        switch (value) {
+            case 1 -> {
+                return true;
+            }
+            case 0 -> {
+                return false;
+            }
+            default -> {
+                System.out.println("Error");
+                return false;
+            }
+        }
+    }
+
+
+
+
+
 
 //OLD METHODS
 
