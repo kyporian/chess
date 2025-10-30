@@ -6,6 +6,7 @@ public class Chess {
     * option to display captured pieces
     * make simpler prompt method used for every prompt
     * remove system.exits
+    * change array length to 8, format the print board properly
     **/
     static Scanner input = new Scanner(System.in); //Scanner
     static String[][] board = createVisualBoard(); //Chessboard
@@ -47,31 +48,29 @@ public class Chess {
 
     //Create Board
     public static String[][] createVisualBoard() {
-        String[][] playingBoard = new String[10][10]; //initialize and declare chessboard
+        String[][] playingBoard = new String[8][8]; //initialize and declare chessboard
         for (String[] matrix : playingBoard) {
             for (int j = 0; j < playingBoard.length; j++) {
                 matrix[j] = " ";
             }
         }
 
-        String[] pieces = {" ", " ", "r", "n", "b", "q", "k", "b", "n", "r"};
-        String[] letters = {" ", " ", "a", "b", "c", "d", "e", "f", "g", "h"};
-        String[] numbers = {" ", " ", "1", "2", "3", "4", "5", "6", "7", "8"};
+        String[] pieces = {"r", "n", "b", "q", "k", "b", "n", "r"};
+        //String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        //String[] numbers = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
-        for(int i = 2; i < 10; i++) { // initialize pawns
-            playingBoard[3][i] = "p";
-            playingBoard[8][i] = "P"; 
+        for(int i = 0; i < 8; i++) { // initialize pawns
+            playingBoard[1][i] = "p";
+            playingBoard[6][i] = "P"; 
         }
          
-        for(int i = 2; i < 10; i++) { //initialize row and column labels, and chess pieces
-            playingBoard[i][0] = numbers[i];
-            playingBoard[0][i] = letters[i];
-            playingBoard[2][i] = pieces[i];
-            playingBoard[9][i] = pieces[i].toUpperCase();
+        for(int i = 0; i < 8; i++) { //initialize row and column labels, and chess pieces
+            playingBoard[0][i] = pieces[i];
+            playingBoard[7][i] = pieces[i].toUpperCase();
         }
             
-        for(int i = 4; i <= 7; i++) { // fill chessboard with '.' for visuals
-            for(int j = 2; j < 10; j++) {
+        for(int i = 2; i <= 5; i++) { // fill chessboard with '.' for visuals
+            for(int j = 0; j < 8; j++) {
                 playingBoard[i][j] = ".";
             }
         }
